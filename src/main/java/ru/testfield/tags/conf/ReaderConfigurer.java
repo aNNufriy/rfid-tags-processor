@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class ReaderConfigurer {
 
-    final Map<String, Object> propertiesMap;
+    private final Map<String, Object> propertiesMap;
 
     public ReaderConfigurer() {
         this.propertiesMap = TagsReceivingPropertiesYamlLoader.loadFromYml();
@@ -101,7 +101,6 @@ public class ReaderConfigurer {
     }
 
     public static class TypeMismatchException extends RuntimeException {
-
         public TypeMismatchException(String msg) {
             super(msg);
         }

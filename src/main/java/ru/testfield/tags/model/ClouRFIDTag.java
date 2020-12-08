@@ -11,12 +11,9 @@ public class ClouRFIDTag implements RFIDTag {
         this.tagModel = tagModel;
     }
 
-    public ClouRFIDTag() {
-    }
+    private final UUID uuid;
 
-    private UUID uuid;
-
-    private Tag_Model tagModel;
+    private final Tag_Model tagModel;
 
     public UUID getUUID(){
         return this.uuid;

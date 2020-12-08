@@ -1,4 +1,4 @@
-package ru.testfield.tags.service.processor;
+package ru.testfield.tags.service.consumer;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;

@@ -3,7 +3,7 @@ package ru.testfield.tags.service.packer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Dropping10ThCapacityOnOverflowPacker<V> extends Packer<V> {
+public class Dropping10ThCapacityOnOverflowQueuePacker<V> extends QueuePacker<V> {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
