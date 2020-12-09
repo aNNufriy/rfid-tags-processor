@@ -37,7 +37,7 @@ public class QueuePacker<T> implements Packer<T> {
     @Override
     public Optional<List<T>> getPack() {
         try {
-            getPackLock.lock();;
+            getPackLock.lock();
             return getPackOfFixedSize(blockingQueue.size());
         } finally {
             getPackLock.unlock();

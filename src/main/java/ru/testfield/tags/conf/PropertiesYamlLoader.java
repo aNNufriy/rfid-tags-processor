@@ -1,39 +1,37 @@
 package ru.testfield.tags.conf;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
+import ru.testfield.tags.conf.holders.Antenna;
+import ru.testfield.tags.conf.holders.ReaderProperties;
 
 import java.io.*;
-import java.util.Map;
 
 public class PropertiesYamlLoader {
 
-    private static final Logger logger = LoggerFactory.getLogger(PropertiesYamlLoader.class);
-
-    public static Map<String, Object> loadFromYml() {
-        return loadFromYml(System.getProperty("user.dir") + "/properties.yml");
-    }
-
-    public static Map<String, Object> loadFromYml(String filename) {
+    public static ReaderProperties loadFromYml(String filename) {
         try (InputStream propertiesFileStream = new FileInputStream(new File(filename))) {
-            final Map<String, Object> propertiesMap = loadFromYml(propertiesFileStream);
-            if(propertiesMap==null){
-                throw new UnableToLoadPropertiesFileException("Yaml unable to parse file");
+            final ReaderProperties properties = loadFromYml(propertiesFileStream);
+            if(properties==null){
+                throw new UnableToLoadPropertiesFileException("Yaml unable to parse file: "+filename);
             }else{
-                return propertiesMap;
+                return properties;
             }
         } catch (IOException e) {
-            String msg = String.format("Unable to open properties file: %s", filename);
-            logger.error(msg);
+            String msg = String.format("Unable to read properties file: %s", filename);
             throw new PropertiesFileNotFoundException(msg, e);
         }
     }
 
-    public static Map<String, Object> loadFromYml(InputStream propertiesFileStream) {
-        final Yaml yaml = new Yaml(new Constructor(ReaderConfigurer.class));
-        return new Yaml().load(propertiesFileStream);
+    private static ReaderProperties loadFromYml(InputStream propertiesFileStream) {
+        Constructor constructor = new Constructor(ReaderProperties.class);
+        TypeDescription customTypeDescription = new TypeDescription(ReaderProperties.class);
+        customTypeDescription.addPropertyParameters("antennas", Antenna.class);
+        constructor.addTypeDescription(customTypeDescription);
+
+        Yaml yaml = new Yaml(constructor);
+        return yaml.load(propertiesFileStream);
     }
 
     static class PropertiesFileNotFoundException extends RuntimeException {
@@ -41,6 +39,7 @@ public class PropertiesYamlLoader {
             super(msg, cause);
         }
     }
+
     static class UnableToLoadPropertiesFileException extends RuntimeException {
         UnableToLoadPropertiesFileException(String msg) {
             super(msg);

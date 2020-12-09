@@ -16,17 +16,17 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class TagsReadingService {
 
-    ReaderConfigurer readerConfigurer = new ReaderConfigurer();
+    final ReaderConfigurer readerConfigurer = new ReaderConfigurer();
 
-    Packer<String> packer = new QueuePacker<>();
-    TagsReader<String> tagsReader = new MockTagsReader();
-    TagsProcessor processor = new SchedulerProcessor<>(packer, new LogOnlyListConsumer<>(),1, TimeUnit.SECONDS);
+    final Packer<String> packer = new QueuePacker<>();
+    final TagsReader<String> tagsReader = new MockTagsReader();
+    final TagsProcessor processor = new SchedulerProcessor<>(packer, new LogOnlyListConsumer<>(),1, TimeUnit.SECONDS);
 
     @PostConstruct
     public void postConstruct() {
         tagsReader.acceptPacker(packer);
         processor.startProcessing();
         System.out.println(readerConfigurer.getClouPort());
-        System.out.println(readerConfigurer.getAntsPower());
+        System.out.println(readerConfigurer.getAntennasPower());
     }
 }
