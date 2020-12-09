@@ -2,7 +2,7 @@ package ru.testfield.tags.service;
 
 import org.springframework.stereotype.Service;
 import ru.testfield.tags.conf.ReaderConfigurer;
-import ru.testfield.tags.service.consumer.LogOnlyTagsConsumer;
+import ru.testfield.tags.service.consumer.LogOnlyListConsumer;
 import ru.testfield.tags.service.packer.Packer;
 import ru.testfield.tags.service.packer.QueuePacker;
 import ru.testfield.tags.service.processor.SchedulerProcessor;
@@ -20,13 +20,13 @@ public class TagsReadingService {
 
     Packer<String> packer = new QueuePacker<>();
     TagsReader<String> tagsReader = new MockTagsReader();
-    TagsProcessor processor = new SchedulerProcessor<>(packer, new LogOnlyTagsConsumer<>(),1, TimeUnit.SECONDS);
+    TagsProcessor processor = new SchedulerProcessor<>(packer, new LogOnlyListConsumer<>(),1, TimeUnit.SECONDS);
 
     @PostConstruct
     public void postConstruct() {
         tagsReader.acceptPacker(packer);
         processor.startProcessing();
         System.out.println(readerConfigurer.getClouPort());
+        System.out.println(readerConfigurer.getAntsPower());
     }
-
 }

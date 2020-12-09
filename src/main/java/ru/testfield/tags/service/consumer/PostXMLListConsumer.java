@@ -15,30 +15,31 @@ import javax.xml.bind.Marshaller;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.function.Consumer;
 
-public class PostXMLConsumer implements Consumer<RFIDNotification> {
+public class PostXMLListConsumer<V,T extends List<V>> implements Consumer<T> {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final String tfsRecieverUrl;
 
-    public PostXMLConsumer(String receiverUrl) {
+    public PostXMLListConsumer(String receiverUrl) {
         this.tfsRecieverUrl = receiverUrl;
     }
 
     @Override
-    public void accept(RFIDNotification rfidNotification) {
-        logger.debug("Sending: " + rfidNotification.getUUID()+", tagsNumber: "+rfidNotification.getRfidTagsSize());
+    public void accept(T pack) {
+        logger.debug("Sending pack of size: " + pack.size());
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             Marshaller marshaller = JAXBContext.newInstance(RFIDNotification.class).createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
             StringWriter stringWriter = new StringWriter();
-            marshaller.marshal(rfidNotification, stringWriter);
+            marshaller.marshal(pack, stringWriter);
             HttpPost httppost = new HttpPost(tfsRecieverUrl);
             httppost.setEntity(new ByteArrayEntity(stringWriter.toString().getBytes(StandardCharsets.UTF_8)));
             HttpResponse response = httpclient.execute(httppost);
-            logger.debug("Sent: " + rfidNotification.getUUID()+", status: "+response.getStatusLine());
+            logger.debug("Sent pack of size: {}, response: {}", pack.size(), response.getStatusLine());
         } catch (IOException e) {
             logger.error("IOException: " + e.getMessage());
         } catch (JAXBException e) {

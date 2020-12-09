@@ -4,6 +4,7 @@ import com.clou.uhf.G3Lib.Enumeration.eAntennaNo;
 import com.clou.uhf.G3Lib.Enumeration.eRF_Range;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ReaderConfigurer {
@@ -11,15 +12,15 @@ public class ReaderConfigurer {
     private final Map<String, Object> propertiesMap;
 
     public ReaderConfigurer() {
-        this.propertiesMap = TagsReceivingPropertiesYamlLoader.loadFromYml();
+        this.propertiesMap = PropertiesYamlLoader.loadFromYml();
     }
 
     public String getClouAddress() {
-        return propertiesMap.get("clouAddress").toString();
+        return validateAndReturn("clou_address", String.class);
     }
 
     public int getClouPort() {
-        return (Integer) validateAndReturn("clouPort", Integer.class);
+        return validateAndReturn("clouPort", Integer.class);
     }
 
     public String getConnID() {
@@ -27,19 +28,28 @@ public class ReaderConfigurer {
     }
 
     public int getTagUpdateTime() {
-        return (Integer) validateAndReturn("tagUpdateTime", Integer.class) / 10;
+        return validateAndReturn("tagUpdateTime", Integer.class) / 10;
     }
 
     public eRF_Range getFreqRange() {
-        return eRF_Range.valueOf((String) validateAndReturn("frequency", String.class));
+        return eRF_Range.valueOf(validateAndReturn("frequency", String.class));
     }
 
     public Map<Integer, Integer> getAntsPower() {
+        final List<?> antennas = validateAndReturn("antennas", List.class);
         Map<Integer, Integer> antsPower = new HashMap<>();
-        antsPower.put(1, (Integer) validateAndReturn("antenna1power", Integer.class));
-        antsPower.put(2, (Integer) validateAndReturn("antenna2power", Integer.class));
-        antsPower.put(3, (Integer) validateAndReturn("antenna3power", Integer.class));
-        antsPower.put(4, (Integer) validateAndReturn("antenna4power", Integer.class));
+        for(Object antenna: antennas){
+            if(antenna instanceof Map){
+                final Integer number = (Integer) ((Map<String, Object>) antenna).get("number");
+                final Integer powerPercent  = (Integer) ((Map<String, Object>) antenna).get("power_percent");
+
+                final int power = (int) Math.round(powerPercent / 100.0 * 33);
+                final Integer previous = antsPower.put(number, power);
+                if(previous!=null){
+                    throw new InconsistentConfigException("antenna number duplicated: " + number);
+                }
+            }
+        }
         return antsPower;
     }
 
@@ -53,48 +63,48 @@ public class ReaderConfigurer {
 
     public int getAnt() {
         int ant = 0;
-        if ((Boolean) validateAndReturn("antenna1enabled", Boolean.class)) {
+        if (validateAndReturn("antenna1enabled", Boolean.class)) {
             ant += eAntennaNo._1.GetNum();
         }
-        if ((Boolean) validateAndReturn("antenna2enabled", Boolean.class)) {
+        if (validateAndReturn("antenna2enabled", Boolean.class)) {
             ant += eAntennaNo._2.GetNum();
         }
-        if ((Boolean) validateAndReturn("antenna3enabled", Boolean.class)) {
+        if (validateAndReturn("antenna3enabled", Boolean.class)) {
             ant += eAntennaNo._3.GetNum();
         }
-        if ((Boolean) validateAndReturn("antenna4enabled", Boolean.class)) {
+        if (validateAndReturn("antenna4enabled", Boolean.class)) {
             ant += eAntennaNo._4.GetNum();
         }
         return ant;
     }
 
     public boolean shouldReadTids() {
-        return (Boolean) validateAndReturn("readTid", Boolean.class);
+        return validateAndReturn("readTid", Boolean.class);
     }
 
     public int getBasebandQValue() {
-        return (Integer) validateAndReturn("baseBandQValue", Integer.class);
+        return validateAndReturn("baseBandQValue", Integer.class);
     }
 
     public int getBasebandSearchType() {
-        return (Integer) validateAndReturn("baseBandSearchType", Integer.class);
+        return validateAndReturn("baseBandSearchType", Integer.class);
     }
 
     public String getTfsRecieverUrl() {
-        return (String) validateAndReturn("tfsReceiverUrl", String.class);
+        return validateAndReturn("tfsReceiverUrl", String.class);
     }
 
     public int getMaxRetry() {
-        return (Integer) validateAndReturn("maxRetry", Integer.class);
+        return validateAndReturn("maxRetry", Integer.class);
     }
 
-    protected Object validateAndReturn(String propertyName, Class<?> clazz) {
+    protected <T> T validateAndReturn(String propertyName, Class<T> clazz) {
         final Object value = propertiesMap.get(propertyName);
         if(value==null){
             throw new ExpectedParameterNotFoundException("No such parameter: "+propertyName);
         }
         if (clazz.isInstance(value)) {
-            return value;
+            return clazz.cast(value);
         } else {
             throw new TypeMismatchException("Type missmatch. expected: " + clazz.getName() + ", got" + value.getClass().getName());
         }
@@ -108,6 +118,12 @@ public class ReaderConfigurer {
 
     public static class ExpectedParameterNotFoundException extends RuntimeException {
         public ExpectedParameterNotFoundException(String msg) {
+            super(msg);
+        }
+    }
+
+    public static class InconsistentConfigException extends RuntimeException {
+        public InconsistentConfigException(String msg) {
             super(msg);
         }
     }

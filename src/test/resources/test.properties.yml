@@ -1,0 +1,7 @@
+string_value: "localhost"
+integer_value: 9090
+list_value:
+  - { map_value1: 1, map_value2: true, map_value_3: 100 }
+  - { map_value1: 2, map_value2: true, map_value_3: 100 }
+  - { map_value1: 3, map_value2: true, map_value_3: 100 }
+  - { map_value1: 4, map_value2: true, map_value_3: 100 }

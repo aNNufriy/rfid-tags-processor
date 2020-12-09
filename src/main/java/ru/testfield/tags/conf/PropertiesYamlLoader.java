@@ -3,13 +3,14 @@ package ru.testfield.tags.conf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 
 import java.io.*;
 import java.util.Map;
 
-public class TagsReceivingPropertiesYamlLoader {
+public class PropertiesYamlLoader {
 
-    private static final Logger logger = LoggerFactory.getLogger(TagsReceivingPropertiesYamlLoader.class);
+    private static final Logger logger = LoggerFactory.getLogger(PropertiesYamlLoader.class);
 
     public static Map<String, Object> loadFromYml() {
         return loadFromYml(System.getProperty("user.dir") + "/properties.yml");
@@ -31,6 +32,7 @@ public class TagsReceivingPropertiesYamlLoader {
     }
 
     public static Map<String, Object> loadFromYml(InputStream propertiesFileStream) {
+        final Yaml yaml = new Yaml(new Constructor(ReaderConfigurer.class));
         return new Yaml().load(propertiesFileStream);
     }
 
