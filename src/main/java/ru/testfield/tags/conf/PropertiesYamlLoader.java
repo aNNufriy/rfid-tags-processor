@@ -3,8 +3,8 @@ package ru.testfield.tags.conf;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
-import ru.testfield.tags.conf.holders.Antenna;
-import ru.testfield.tags.conf.holders.ReaderProperties;
+import ru.testfield.tags.conf.dto.Antenna;
+import ru.testfield.tags.conf.dto.ReaderProperties;
 
 import java.io.*;
 

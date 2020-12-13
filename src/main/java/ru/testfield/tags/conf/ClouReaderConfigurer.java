@@ -1,16 +1,16 @@
 package ru.testfield.tags.conf;
 
-import ru.testfield.tags.conf.holders.Antenna;
-import ru.testfield.tags.conf.holders.ReaderProperties;
+import ru.testfield.tags.conf.dto.Antenna;
+import ru.testfield.tags.conf.dto.ReaderProperties;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ReaderConfigurer {
+public class ClouReaderConfigurer {
 
     private final ReaderProperties properties;
 
-    public ReaderConfigurer() {
+    public ClouReaderConfigurer() {
         this.properties = PropertiesYamlLoader.loadFromYml("properties.yml");
     }
 

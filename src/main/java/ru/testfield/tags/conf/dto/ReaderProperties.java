@@ -1,4 +1,4 @@
-package ru.testfield.tags.conf.holders;
+package ru.testfield.tags.conf.dto;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

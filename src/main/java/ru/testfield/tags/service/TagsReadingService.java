@@ -1,7 +1,7 @@
 package ru.testfield.tags.service;
 
 import org.springframework.stereotype.Service;
-import ru.testfield.tags.conf.ReaderConfigurer;
+import ru.testfield.tags.conf.ClouReaderConfigurer;
 import ru.testfield.tags.service.consumer.LogOnlyListConsumer;
 import ru.testfield.tags.service.packer.Packer;
 import ru.testfield.tags.service.packer.QueuePacker;
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class TagsReadingService {
 
-    final ReaderConfigurer readerConfigurer = new ReaderConfigurer();
+    final ClouReaderConfigurer clouReaderConfigurer = new ClouReaderConfigurer();
 
     final Packer<String> packer = new QueuePacker<>();
     final TagsReader<String> tagsReader = new MockTagsReader();
@@ -26,7 +26,7 @@ public class TagsReadingService {
     public void postConstruct() {
         tagsReader.acceptPacker(packer);
         processor.startProcessing();
-        System.out.println(readerConfigurer.getClouPort());
-        System.out.println(readerConfigurer.getAntennasPower());
+        System.out.println(clouReaderConfigurer.getClouPort());
+        System.out.println(clouReaderConfigurer.getAntennasPower());
     }
 }

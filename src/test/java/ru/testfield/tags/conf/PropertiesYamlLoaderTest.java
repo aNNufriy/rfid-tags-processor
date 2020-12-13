@@ -1,7 +1,7 @@
 package ru.testfield.tags.conf;
 
 import org.junit.jupiter.api.Test;
-import ru.testfield.tags.conf.holders.ReaderProperties;
+import ru.testfield.tags.conf.dto.ReaderProperties;
 
 import java.net.URL;
 import java.util.Arrays;
