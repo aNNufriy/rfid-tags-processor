@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class LogOnlyListConsumer<V,T extends List<V>> implements Consumer<T> {
+public class LogOnlyListConsumer<T extends List<?>> implements Consumer<T> {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

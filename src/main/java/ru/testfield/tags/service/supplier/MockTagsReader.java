@@ -17,6 +17,11 @@ public class MockTagsReader implements TagsReader<String> {
     }
 
     @Override
+    public boolean isOnline() {
+        return true;
+    }
+
+    @Override
     public void close() {
         es.shutdown();
     }
